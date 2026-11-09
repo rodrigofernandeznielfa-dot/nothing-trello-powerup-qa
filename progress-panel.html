@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NOTHING · Estado del trabajo</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;padding:12px 14px;background:#fff;color:#172b4d;font:13px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+header,.between{display:flex;align-items:center;justify-content:space-between;gap:9px}
+header{margin-bottom:10px}h2{font-size:14px;margin:0;font-weight:700}
+.small,.muted{color:#626f86;font-size:11px}
+.tag{background:#f1f2f4;color:#44546f;border-radius:5px;padding:4px 8px;font-size:11px;font-weight:650}
+.tag.blocked{background:#fff0ee;color:#9a3535;border:1px solid #f4d3d0}
+.blocker{background:#fff0ee;border-radius:7px;padding:8px 11px;margin-bottom:10px;color:#9a3535}
+.blocker strong{font-size:11px;font-weight:650}.blocker p{margin:3px 0 0;font-size:12px;line-height:1.45}
+.blocker a{color:#9a3535;font-weight:600;text-decoration:underline;text-underline-offset:2px}
+.blocker a:focus-visible{outline:2px solid #9a3535;outline-offset:2px}
+.preview{position:fixed;z-index:100;background:#fff;color:#172b4d;width:270px;max-width:calc(100vw - 18px);border:1px solid #dfe3e8;border-radius:9px;box-shadow:0 7px 22px rgba(23,43,77,.15);padding:11px 12px;pointer-events:none}
+.preview-title{font-size:13px;font-weight:700;line-height:1.3;margin-bottom:5px}
+.preview-state{display:inline-block;background:#f1f2f4;color:#44546f;border-radius:4px;padding:2px 6px;font-size:10px;margin-bottom:7px}
+.preview-desc{font-size:12px;color:#44546f;line-height:1.5;overflow-wrap:anywhere}
+.preview-hint{font-size:10px;color:#626f86;margin-top:7px}
+.references{margin-top:10px;padding:9px 1px 0;border-top:1px solid #e6e9ee}
+.references-head{font-size:11px;color:#626f86;font-weight:650;margin-bottom:5px}
+.references-links{display:flex;flex-wrap:wrap;gap:6px 13px}
+.references-links a{color:#5c7898;font-size:12px;font-weight:600;text-decoration:none;line-height:1.5}
+.references-links a:hover,.references-links a:focus-visible{text-decoration:underline}
+.references-links a:focus-visible{outline:2px solid #5c7898;outline-offset:3px;border-radius:2px}
+.summary{border:1px solid #dfe3e8;border-radius:9px;padding:12px;background:#fafbfc}
+.value{font-size:19px;font-weight:750;font-variant-numeric:tabular-nums}
+.track{display:flex;gap:3px;margin:9px 0 6px}.segment{flex:1;height:8px;background:#e4e8ed;border-radius:3px}.segment.done{background:#4b9b7a}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid #e4e8ed}
+.time{font-weight:700;font-size:15px;color:#172b4d;overflow-wrap:anywhere}
+.next{margin-top:10px;padding:10px 12px;background:#f1f7f4;border-radius:8px;border-left:3px solid #4b9b7a}
+.next strong{font-size:11px;color:#44546f}.next p{margin:3px 0 0;overflow-wrap:anywhere}
+#status{color:#626f86;font-size:12px;padding:8px 0}
+#state.needs-check{color:#805900;background:#fff6d8;border-radius:4px;padding:3px 6px}
+#warning:not(:empty){margin-top:8px;color:#805900;font-size:11px}
+.notice{margin:3px 0}
+.recommendation{border:1px solid #dcb72f;border-left:4px solid #facc15;background:#fffbe7;color:#5a4606;border-radius:8px;padding:12px;margin-bottom:12px;overflow-wrap:anywhere}
+.recommendation.accepted{background:#f1f7f4;border-color:#93b9a6;color:#24533f}
+.recommendation.dismissed{background:#f7f8f9;border-color:#c6ccd5;color:#44546f}
+.recommendation h3{margin:0;font-size:13px}.recommendation p{margin:8px 0 0;font-size:12px;line-height:1.5}
+.recommendation .action{font-weight:700;font-size:13px}
+.recommendation-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.recommendation button{font:600 12px/1.4 system-ui;min-height:36px;border:1px solid #856319;border-radius:5px;background:#fff;padding:7px 10px;color:#61490f;cursor:pointer}
+.recommendation button:first-child{background:#facc15;border-color:#d1aa08;color:#172b4d}
+.recommendation button:focus-visible{outline:3px solid #172b4d;outline-offset:3px}
+.recommendation button:disabled{cursor:default;opacity:.6}
+#recommendation-status{font-size:11px}
+footer{margin-top:8px;font-size:10px;color:#626f86}
+[hidden]{display:none!important}
+
+/* Compact layout for narrow Trello panels. */
+@media (max-width:420px){
+ body{padding:10px 11px;font-size:14px;line-height:1.45}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .grid>div:last-child{grid-column:1/-1}
+ .small,.muted,.tag,.references-head,.next strong,.blocker strong,#warning:not(:empty),#recommendation-status{font-size:12px}
+ .blocker p,.references-links a,.recommendation p{font-size:13px}
+ .value{font-size:20px}
+ footer,.preview-hint{font-size:11px;line-height:1.5}
+ .recommendation button{font-size:13px;min-height:40px}
+ .recommendation-actions button{flex:1 1 110px}
+}
+/* High-contrast dark palette for every host theme. */
+body{background:#111a20;color:#e9f1f3}
+.summary{background:#19262c;border-color:#40525b}
+.small,.muted,footer,#status,.preview-hint{color:#b9cbd1}
+.tag,.preview-state{background:#2a3a42;color:#e2edf1}
+.tag.blocked{background:#42292b;border-color:#9d5557;color:#ffd1cb}
+.blocker{background:#42292b;color:#ffd1cb}
+.blocker a{color:#ffb5ac}
+.preview{background:#1b2a31;color:#e9f1f3;border-color:#50616b}
+.preview-title,.time,.value{color:#f0f5f7}
+.preview-desc{color:#d5e4e9}
+.references,.grid{border-color:#43535c}
+.references-head{color:#b9cbd1}
+.references-links a{color:#a7cff9}
+.track .segment{background:#43535c}
+.track .segment.done{background:#50b18c}
+.next{background:#213b32;border-left-color:#50b18c}
+.next strong{color:#cce9dd}
+#warning:not(:empty){color:#ffd88c}
+#state.needs-check{color:#ffd88c;background:#443717}
+.recommendation{background:#332e18;border-color:#8e7a32;border-left-color:#facc15;color:#ffe79a}
+.recommendation.accepted{background:#203d30;border-color:#569a7a;color:#d2f4df}
+.recommendation.dismissed{background:#2c3941;border-color:#657781;color:#d9e4e9}
+.recommendation button{background:#302b21;border-color:#e6c774;color:#ffe9ab}
+.recommendation button:first-child{background:#facc15;border-color:#facc15;color:#191f23}
+.recommendation button:focus-visible{outline-color:#dcefff}
+</style>
+<script src="https://p.trellocdn.com/power-up.min.js"></script>
+<script src="./dependencies.js?v=9"></script>
+<script src="./reference-catalog.js?v=2"></script>
+<script defer src="./progress-panel.js?v=19"></script>
+</head><body>
+<header><h2>Estado del trabajo</h2><span class="tag" id="state">Cargando</span></header>
+<div id="status">Consultando datos…</div>
+<div id="blocker" class="blocker" hidden></div>
+<div id="dependency-preview" class="preview" role="tooltip" hidden></div>
+<main id="content" hidden>
+<section class="recommendation" id="recommendation" aria-labelledby="recommendation-title" hidden>
+ <h3 id="recommendation-title">Propuesta · siguiente tarea</h3>
+ <p class="action" id="recommendation-action"></p>
+ <p><strong>Por qué ahora:</strong> <span id="recommendation-reason"></span></p>
+ <p><strong>Qué ganaríamos:</strong> <span id="recommendation-outcome"></span></p>
+ <p id="recommendation-date"></p>
+ <div class="recommendation-actions" id="recommendation-actions">
+  <button type="button" id="recommendation-accept">Aceptar propuesta</button>
+  <button type="button" id="recommendation-dismiss">Ahora no</button>
+ </div>
+ <div class="recommendation-actions" id="recommendation-reconsider-wrap" hidden><button type="button" id="recommendation-reconsider">Revisar mi decisión</button></div>
+ <p id="recommendation-status" role="status" aria-live="polite"></p>
+</section>
+<div class="summary">
+ <div class="between"><span><strong>Progreso</strong> <span class="small" id="done"></span></span><span class="value" id="percent">—</span></div>
+ <div class="track" id="track" aria-hidden="true"></div><span id="left" class="small"></span>
+ <div class="grid">
+  <div><div class="muted">Previsto</div><div class="time" id="planned">—</div><div id="plannedCaption" class="small"></div></div>
+  <div><div class="muted">Pendiente</div><div class="time" id="remaining">—</div><div id="remainCaption" class="small"></div></div>
+  <div><div class="muted" id="spentLabel">Completado</div><div class="time" id="spent">—</div><div id="spentCaption" class="small"></div></div>
+ </div>
+</div>
+<div class="next"><strong>Siguiente paso</strong><p id="next">—</p></div>
+<section class="references" id="references" hidden><div class="references-head">Referencias</div><div class="references-links" id="reference-links"></div></section>
+<div id="warning" hidden></div>
+<ul id="steps" hidden></ul>
+</main>
+<footer>≈ son estimaciones de esfuerzo, no plazos de calendario ni horas cronometradas. Las horas pendientes bajan al completar tareas estimadas.</footer>
+</body></html>
