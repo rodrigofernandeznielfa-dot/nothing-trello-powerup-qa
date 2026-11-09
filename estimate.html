@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estimaciones · NOTHING</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;padding:14px;background:#151b1f;color:#e9eff1;font:13px/1.45 system-ui,sans-serif}p{color:#b0c0c6;margin:0 0 12px}label{display:flex;align-items:center;gap:10px;border-top:1px solid #374348;padding:9px 0}label span{flex:1;overflow-wrap:anywhere}label.done span{text-decoration:line-through;opacity:.6}input{width:72px;padding:8px;background:#232d31;border:1px solid #52636b;border-radius:7px;color:#fff;font:inherit}input:focus-visible,button:focus-visible{outline:2px solid #78cfad;outline-offset:2px}button{background:#32745d;color:white;border:0;border-radius:8px;padding:9px 16px;cursor:pointer;font-weight:600}button:disabled{opacity:.5;cursor:wait}footer{position:sticky;bottom:0;background:#151b1f;padding:10px 0 0;display:flex;align-items:center;justify-content:space-between}small{color:#b0c0c6}#error{color:#ffb4a9}
+</style>
+<script src="https://p.trellocdn.com/power-up.min.js"></script>
+<script type="module" src="./estimate.js?v=2"></script>
+</head><body><p>Horas aproximadas por criterio pendiente. Al completar una casilla, descontaremos automáticamente sus horas.</p><div id="items" aria-live="polite"></div><p id="error" role="alert"></p><footer><small id="summary">Sin estimaciones</small><button id="save" type="button">Guardar</button></footer></body></html>
